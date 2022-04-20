@@ -18,10 +18,10 @@ const targets = [
 //     'http://localhost:8001'
 // ];
 
-let epsilon = 2, initial_explore = 5, rri = -1;
+let epsilon = 2, initial_explore = 5;
 // (1/epsilon) is the chance for exploitation
 // initial_explore is how many roundrobin iterations for initialization
-// rri is the current round robin index
+//     and the number of most recent response times recorded
 
 let target_times = [], avg_times = [], initialize = true;
 let time_count = 0, maxcount = initial_explore * targets.length;
@@ -55,16 +55,16 @@ proxyServer.on('proxyRes', function (proxyRes, req, res) {
                 if(avg_times[j] < avg_times[minInd]) minInd = j;
             }
 
-            console.log(avg_times.toString());
-            console.log(`First minInd is ${minInd}`);
+            // console.log(avg_times.toString());
+            // console.log(`First minInd is ${minInd}`);
         }
     } else {
         oldtime = target_times[i].shift();
         avg_times[i] += (rtime - oldtime) / initial_explore;
-        console.log(`New avg time at index ${i} is ${avg_times[i]}`)
+        // console.log(`New avg time at index ${i} is ${avg_times[i]}`)
         if(avg_times[i] < avg_times[minInd]){
             minInd = i;
-            console.log(`New minInd is ${minInd}`);
+            // console.log(`New minInd is ${minInd}`);
         }
     }
 
