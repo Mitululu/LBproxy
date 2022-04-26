@@ -1,3 +1,11 @@
+// Video stream load balancer with decision based on
+// epsilon-greedy reinforcement learning algorithm with
+// video server response time as the metric.
+
+// Tracks average of last 10 response times of each video server
+// and chooses the lowest at a rate of 1/epsilon (exploitation)
+// and a server at random otherwise (exploration).
+
 const http = require('http');
 const proxy = require('http-proxy');
 
@@ -54,7 +62,6 @@ proxyServer.on('proxyRes', function (proxyRes, req, res) {
                 avg_times[j] /= initial_explore;
                 if(avg_times[j] < avg_times[minInd]) minInd = j;
             }
-
             // console.log(avg_times.toString());
             // console.log(`First minInd is ${minInd}`);
         }
@@ -67,8 +74,7 @@ proxyServer.on('proxyRes', function (proxyRes, req, res) {
             // console.log(`New minInd is ${minInd}`);
         }
     }
-
-    // console.log(`Target index ${i} (${targets[i]}) had a response time of ${target_times[i]} ms`);
+    console.log(`Target index ${i} (${targets[i]}) had a response time of ${avg_times[i]} ms`);
 });
 
 // RandomLB target index: Math.floor(Math.random()*3)
@@ -84,7 +90,7 @@ http.createServer((req, res) => {
             i = Math.floor(Math.random()*targets.length);
         }
 
-        // console.log(`minInd is ${minInd} and chosen is ${i}`);
+        console.log(`minInd is ${minInd} and chosen is ${i}`);
     }
 
     proxyServer.web(req, res, {target: targets[i]});
