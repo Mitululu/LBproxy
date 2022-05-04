@@ -10,16 +10,18 @@ const http = require('http');
 const proxy = require('http-proxy');
 
 const targets = [
-    // 'http://ec2-44-203-194-237.compute-1.amazonaws.com:8000',
-    // 'http://ec2-54-90-103-139.compute-1.amazonaws.com:8000',
-    // 'http://ec2-54-159-207-166.compute-1.amazonaws.com:8000',
-    // 'http://ec2-3-85-129-7.compute-1.amazonaws.com:8000',
-    // 'http://ec2-54-144-64-83.compute-1.amazonaws.com:8000',
-    'http://ec2-54-152-11-82.compute-1.amazonaws.com:8000',
-    'http://ec2-52-91-35-74.compute-1.amazonaws.com:8000',
-    'http://ec2-54-174-93-234.compute-1.amazonaws.com:8000',
-    'http://ec2-52-207-255-70.compute-1.amazonaws.com:8000',
-    'http://ec2-18-212-212-83.compute-1.amazonaws.com:8000'
+    "http://ec2-34-204-44-157.compute-1.amazonaws.com:8000/",
+    "http://ec2-18-232-169-203.compute-1.amazonaws.com:8000/",
+    "http://ec2-54-227-67-16.compute-1.amazonaws.com:8000/",
+    "http://ec2-54-234-66-236.compute-1.amazonaws.com:8000/",
+    "http://ec2-107-23-13-235.compute-1.amazonaws.com:8000/",
+    "http://ec2-3-83-178-231.compute-1.amazonaws.com:8000/",
+    "http://ec2-18-212-3-75.compute-1.amazonaws.com:8000/",
+    "http://ec2-18-233-155-12.compute-1.amazonaws.com:8000/",
+    "http://ec2-54-173-81-57.compute-1.amazonaws.com:8000/",
+    "http://ec2-174-129-145-113.compute-1.amazonaws.com:8000/",
+    "http://ec2-52-54-254-23.compute-1.amazonaws.com:8000/",
+    "http://ec2-54-172-39-80.compute-1.amazonaws.com:8000/"
 ];
 // const targets = [
 //     'http://localhost:8000',
