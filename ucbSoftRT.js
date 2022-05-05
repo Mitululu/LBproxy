@@ -7,9 +7,23 @@ const http = require('http');
 const proxy = require('http-proxy');
 
 const targets = [
-    'http://localhost:8000',
-    'http://localhost:8001'
+    "http://34.201.76.76:8000/",
+    "http://18.208.180.237:8000/",
+    "http://54.197.21.48:8000/",
+    "http://44.202.102.250:8000/",
+    "http://44.202.82.37:8000/",
+    "http://3.82.125.158:8000/",
+    "http://3.92.178.80:8000/",
+    "http://54.89.183.168:8000/",
+    "http://18.212.168.69:8000/",
+    "http://18.212.177.139:8000/",
+    "http://52.90.114.26:8000/",
+    "http://184.72.193.108:8000/"
 ];
+// const targets = [
+//     'http://localhost:8000',
+//     'http://localhost:8001'
+// ];
 
 let cons_add = 10, initial_explore = 3;
 // cons_add is a specific value each server's metric is worsened by

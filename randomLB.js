@@ -1,22 +1,24 @@
 const http = require('http');
 const proxy = require('http-proxy');
 
-// const targets = [
-//     'http://ec2-44-203-194-237.compute-1.amazonaws.com:8000',
-//     'http://ec2-54-90-103-139.compute-1.amazonaws.com:8000',
-//     'http://ec2-54-159-207-166.compute-1.amazonaws.com:8000',
-//     'http://ec2-3-85-129-7.compute-1.amazonaws.com:8000',
-//     'http://ec2-54-144-64-83.compute-1.amazonaws.com:8000',
-//     'http://ec2-54-152-11-82.compute-1.amazonaws.com:8000',
-//     'http://ec2-52-91-35-74.compute-1.amazonaws.com:8000',
-//     'http://ec2-54-174-93-234.compute-1.amazonaws.com:8000',
-//     'http://ec2-52-207-255-70.compute-1.amazonaws.com:8000',
-//     'http://ec2-18-212-212-83.compute-1.amazonaws.com:8000'
-// ];
 const targets = [
-    'http://localhost:8000',
-    'http://localhost:8001'
+    "http://34.201.76.76:8000/",
+    "http://18.208.180.237:8000/",
+    "http://54.197.21.48:8000/",
+    "http://44.202.102.250:8000/",
+    "http://44.202.82.37:8000/",
+    "http://3.82.125.158:8000/",
+    "http://3.92.178.80:8000/",
+    "http://54.89.183.168:8000/",
+    "http://18.212.168.69:8000/",
+    "http://18.212.177.139:8000/",
+    "http://52.90.114.26:8000/",
+    "http://184.72.193.108:8000/"
 ];
+// const targets = [
+//     'http://localhost:8000',
+//     'http://localhost:8001'
+// ];
 
 let choicecount = 6, initial_explore = 3;
 
@@ -81,8 +83,9 @@ proxyServer.on('proxyRes', function (proxyRes, req, res) {
 // RandomLB target index: Math.floor(Math.random()*3)
 
 http.createServer((req, res) => {
-    let i = Math.floor(Math.random()*targets.length);
+    minInd += 1;
+    i = Math.floor(Math.random()*targets.length);
     proxyServer.web(req, res, {target: targets[i]});
 }).listen(3000, () => {
-    console.log('Proxy server running on port 3000')
+    console.log('Proxy server running on port 3000');
 });

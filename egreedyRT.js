@@ -80,7 +80,7 @@ http.createServer((req, res) => {
 
         // console.log(`minInd is ${minInd} and chosen is ${i}`);
     }
-
+    
     proxyServer.web(req, res, {target: targets[i]});
 }).listen(3000, () => {
     console.log('Proxy server running on port 3000')

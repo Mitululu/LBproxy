@@ -26,6 +26,7 @@ const targets = [
 // ];
 
 let choicecount = 6, initial_explore = 3;
+let epsilon = 0.5, rri = -1;
 
 if(choicecount > targets.length - 1){
     choicecount = targets.length - 1;
@@ -38,7 +39,7 @@ let choosable = new Set(), chosens = [];
 
 for(let j = 0; j < targets.length; j++){
     target_times.push([]);
-    avg_times.push(0)
+    avg_times.push(0);
 }
 
 const proxyServer = proxy.createProxyServer();
@@ -73,16 +74,24 @@ proxyServer.on('proxyRes', function (proxyRes, req, res) {
         chosens.push(i);
         choosable.add(chosens.shift());
 
-        minInd = -1;
-        for(let index of choosable){
-            if(minInd == -1){
-                minInd = index; 
-            }else if(avg_times[index] < avg_times[minInd]){
-                minInd = index;
+        let roll = Math.random();
+        let indices = Array.from(choosable)
+
+        if(roll < epsilon){
+            minInd = indices[0];
+            for(let j = 1; j < indices.length; j++){
+                let index = indices[j]
+                if(avg_times[index] < avg_times[minInd]){
+                    minInd = index;
+                }
             }
+        } else {
+            rri = (rri + 1) % indices.length;
+            minInd = indices[rri];
         }
+        console.log(`Target index ${i} (${targets[i]}) had a response time of ${avg_times[i]} ms`);
+        console.log(`choices are ${indices} and chosen is ${minInd}`);
     }
-    console.log(`Target index ${i} (${targets[i]}) had a response time of ${avg_times[i]} ms`);
 });
 
 
@@ -91,7 +100,6 @@ http.createServer((req, res) => {
         i = (i + 1) % targets.length;
     } else {
         i = minInd;
-        console.log(`choices are ${choosable} and chosen is ${i}`);
     }
 
     proxyServer.web(req, res, {target: targets[i]});

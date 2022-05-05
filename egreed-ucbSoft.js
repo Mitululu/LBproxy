@@ -1,7 +1,7 @@
-// Video stream load balancer with decision based loosely
+// Video stream load balancer with decision based closely
 // on UCB1 reinforcement learning algorithm with
 // video server response time as the metric.
-// Every iteration has a guaranteed minimum level of exploration (hard)
+// Has an softly increasing chance of exploration (soft)
 
 const http = require('http');
 const proxy = require('http-proxy');
@@ -25,20 +25,21 @@ const targets = [
 //     'http://localhost:8001'
 // ];
 
-let choicecount = 6, initial_explore = 3;
-
-if(choicecount > targets.length - 1){
-    choicecount = targets.length - 1;
-}
+let cons_add = 10, initial_explore = 3;
+let epsilon = 0.5, rri = -1;
+// cons_add is a specific value each server's metric is worsened by
+//     each time the server is chosen (choose it less often for exploration)
+// initial_explore is how many roundrobin iterations for initialization
+//     and the number of most recent response times recorded
 
 let target_times = [], avg_times = [], initialize = true;
 let time_count = 0, maxcount = initial_explore * targets.length;
-let i = -1, minInd = 0; // current target index
-let choosable = new Set(), chosens = [];
+let i = -1; // current target index
+let minInd = 0; // target index with lowest avg response time
 
 for(let j = 0; j < targets.length; j++){
     target_times.push([]);
-    avg_times.push(0)
+    avg_times.push(0);
 }
 
 const proxyServer = proxy.createProxyServer();
@@ -52,7 +53,7 @@ proxyServer.on('proxyRes', function (proxyRes, req, res) {
     target_times[i].push(rtime);
 
     if(initialize){
-        // console.log("initialize step")
+        // console.log("initialize step");
         time_count += 1;
         avg_times[i] += rtime
 
@@ -60,41 +61,35 @@ proxyServer.on('proxyRes', function (proxyRes, req, res) {
             initialize = false;
             for(let j = 0; j < avg_times.length; j++){
                 avg_times[j] /= initial_explore;
-
-                if(j < choicecount) choosable.add(j);
-                else chosens.push(j);
+                if(avg_times[j] < avg_times[minInd]) minInd = j;
             }
+            // console.log(avg_times.toString());
+            // console.log(`First minInd is ${minInd}`);
         }
     } else {
         oldtime = target_times[i].shift();
         avg_times[i] += (rtime - oldtime) / initial_explore;
-        
-        choosable.delete(i);
-        chosens.push(i);
-        choosable.add(chosens.shift());
+        avg_times[i] += cons_add;
 
-        minInd = -1;
-        for(let index of choosable){
-            if(minInd == -1){
-                minInd = index; 
-            }else if(avg_times[index] < avg_times[minInd]){
-                minInd = index;
-            }
+        // console.log(`New avg time at index ${i} is ${avg_times[i]}`)
+        for(let j = 0; j < avg_times.length; j++){
+            if(avg_times[j] < avg_times[minInd]) minInd = j;
         }
     }
-    console.log(`Target index ${i} (${targets[i]}) had a response time of ${avg_times[i]} ms`);
+    // console.log(`Target index ${i} (${targets[i]}) had a response time of ${avg_times[i]} ms`);
 });
 
+// RandomLB target index: Math.floor(Math.random()*3)
 
 http.createServer((req, res) => {
     if(initialize){
         i = (i + 1) % targets.length;
     } else {
         i = minInd;
-        console.log(`choices are ${choosable} and chosen is ${i}`);
+        // console.log(`minInd is ${minInd} and chosen is ${i}`);
     }
 
     proxyServer.web(req, res, {target: targets[i]});
 }).listen(3000, () => {
-    console.log('Proxy server running on port 3000');
+    console.log('Proxy server running on port 3000')
 });
