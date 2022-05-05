@@ -19,7 +19,7 @@ if(choicecount > targets.length - 1){
 
 let target_times = [], avg_times = [], initialize = true;
 let time_count = 0, maxcount = initial_explore * targets.length;
-let i = -1, minInd = -1; // current target index
+let i = -1, minInd = 0; // current target index
 let choosable = new Set(), chosens = [];
 
 for(let j = 0; j < targets.length; j++){
@@ -82,5 +82,5 @@ http.createServer((req, res) => {
 
     proxyServer.web(req, res, {target: targets[i]});
 }).listen(3000, () => {
-    console.log('Proxy server running on port 3000')
+    console.log('Proxy server running on port 3000');
 });

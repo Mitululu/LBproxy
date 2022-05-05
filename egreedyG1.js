@@ -76,7 +76,7 @@ proxyServer.on('proxyRes', function (proxyRes, req, res) {
             // console.log(`New minInd is ${minInd}`);
         }
     }
-    console.log(`Target index ${i} (${targets[i]}) had a response time of ${avg_times[i]} ms`);
+    // console.log(`Target index ${i} (${targets[i]}) had a response time of ${avg_times[i]} ms`);
 });
 
 // RandomLB target index: Math.floor(Math.random()*3)
@@ -85,12 +85,7 @@ http.createServer((req, res) => {
     if(initialize){
         i = (i + 1) % targets.length;
     } else {
-        roll = Math.random();
-        if(roll < epsilon){
-            i = minInd;
-        } else {
-            i = Math.floor(Math.random()*targets.length);
-        }
+        
 
         console.log(`minInd is ${minInd} and chosen is ${i}`);
     }
