@@ -70,13 +70,17 @@ proxyServer.on('proxyRes', function (proxyRes, req, res) {
         oldtime = target_times[i].shift();
         avg_times[i] += (rtime - oldtime) / initial_explore;
         avg_times[i] += cons_add;
-
-        // console.log(`New avg time at index ${i} is ${avg_times[i]}`)
-        for(let j = 0; j < avg_times.length; j++){
-            if(avg_times[j] < avg_times[minInd]) minInd = j;
+        
+        if(avg_times[i] < avg_times[minInd]) minInd = i;
+        
+        if(Math.random() < epsilon){
+            i = minInd;
+        } else {
+            rri = (rri + 1) % targets.length;
+            i = rri;
         }
     }
-    // console.log(`Target index ${i} (${targets[i]}) had a response time of ${avg_times[i]} ms`);
+    console.log(`Target index ${i} (${targets[i]}) had a response time of ${avg_times[i]} ms`);
 });
 
 // RandomLB target index: Math.floor(Math.random()*3)
@@ -84,9 +88,6 @@ proxyServer.on('proxyRes', function (proxyRes, req, res) {
 http.createServer((req, res) => {
     if(initialize){
         i = (i + 1) % targets.length;
-    } else {
-        i = minInd;
-        // console.log(`minInd is ${minInd} and chosen is ${i}`);
     }
 
     proxyServer.web(req, res, {target: targets[i]});
