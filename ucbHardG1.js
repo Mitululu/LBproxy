@@ -20,7 +20,7 @@ const targets = [
     "http://44.204.83.211:8000/"
 ];
 
-let choicecount = 3, initial_explore = 5;
+let choicecount = 6, initial_explore = 5;
 
 if(choicecount > targets.length - 1){
     choicecount = targets.length - 1;
@@ -67,15 +67,7 @@ proxyServer.on('proxyRes', function (proxyRes, req, res) {
         choosable.delete(i);
         chosens.push(i);
         choosable.add(chosens.shift());
-    }
-    // console.log(`Target index ${i} (${targets[i]}) had a response time of ${avg_times[i]} ms`);
-});
 
-
-http.createServer((req, res) => {
-    if(initialize){
-        i = (i + 1) % targets.length;
-    } else {
         let minInd = -1;
         for(let index of choosable){
             if(minInd == -1){
@@ -85,6 +77,15 @@ http.createServer((req, res) => {
             }
         }
         i = minInd;
+    }
+    // console.log(`Target index ${i} (${targets[i]}) had a response time of ${avg_times[i]} ms`);
+});
+
+
+http.createServer((req, res) => {
+    if(initialize){
+        i = (i + 1) % targets.length;
+    } else {
         console.log(`choices are ${choosable} and chosen is ${i}`);
     }
 
