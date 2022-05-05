@@ -71,7 +71,7 @@ proxyServer.on('proxyRes', function (proxyRes, req, res) {
         avg_times[i] += (rtime - oldtime) / initial_explore;
         avg_times[i] += cons_add;
         
-        if(avg_times[i] < avg_times[minInd]) minInd = i;
+        if(avg_times[rri] < avg_times[minInd]) minInd = rri;
         
         if(Math.random() < epsilon){
             i = minInd;
