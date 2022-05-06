@@ -7,18 +7,18 @@ const http = require('http');
 const proxy = require('http-proxy');
 
 const targets = [
-    "http://34.201.76.76:8000/",
-    "http://18.208.180.237:8000/",
-    "http://54.197.21.48:8000/",
-    "http://44.202.102.250:8000/",
-    "http://44.202.82.37:8000/",
-    "http://3.82.125.158:8000/",
-    "http://3.92.178.80:8000/",
-    "http://54.89.183.168:8000/",
-    "http://18.212.168.69:8000/",
-    "http://18.212.177.139:8000/",
-    "http://52.90.114.26:8000/",
-    "http://184.72.193.108:8000/"
+    "http://54.89.80.195:8000/",
+    "http://52.91.82.14:8000/",
+    "http://3.91.238.245:8000/",
+    "http://54.87.171.219:8000/",
+    "http://54.162.20.161:8000/",
+    "http://54.198.43.132:8000/",
+    "http://3.84.174.9:8000/",
+    "http://54.166.250.121:8000/",
+    "http://54.85.9.143:8000/",
+    "http://18.215.229.172:8000/",
+    "http://34.201.215.175:8000/",
+    "http://3.90.48.76:8000/"
 ];
 // const targets = [
 //     'http://localhost:8000',
@@ -35,7 +35,7 @@ if(choicecount > targets.length - 1){
 let target_times = [], avg_times = [], initialize = true;
 let time_count = 0, maxcount = initial_explore * targets.length;
 let i = -1, minInd = 0; // current target index
-let choosable = new Set(), chosens = [];
+let choosable = [], chosens = [];
 
 for(let j = 0; j < targets.length; j++){
     target_times.push([]);
@@ -62,35 +62,30 @@ proxyServer.on('proxyRes', function (proxyRes, req, res) {
             for(let j = 0; j < avg_times.length; j++){
                 avg_times[j] /= initial_explore;
 
-                if(j < choicecount) choosable.add(j);
+                if(j < choicecount) choosable.push(j);
                 else chosens.push(j);
             }
         }
     } else {
         oldtime = target_times[i].shift();
         avg_times[i] += (rtime - oldtime) / initial_explore;
-        
-        choosable.delete(i);
         chosens.push(i);
-        choosable.add(chosens.shift());
+        minInd = choosable[0];
+        
+        for(let j = 0; j < choosable.length; j++){
+            if(choosable[j] == i) choosable[j] = chosens.shift();
+            else if(avg_times[choosable[j]] < avg_times[minInd]){
+                minInd = choosable[j];
+            }
+        }
 
         let roll = Math.random();
-        let indices = Array.from(choosable)
-
-        if(roll < epsilon){
-            minInd = indices[0];
-            for(let j = 1; j < indices.length; j++){
-                let index = indices[j]
-                if(avg_times[index] < avg_times[minInd]){
-                    minInd = index;
-                }
-            }
-        } else {
-            rri = (rri + 1) % indices.length;
-            minInd = indices[rri];
+        if(roll > epsilon){
+            rri = (rri + 1) % choosable.length;
+            minInd = choosable[rri];
         }
-        console.log(`Target index ${i} (${targets[i]}) had a response time of ${avg_times[i]} ms`);
-        console.log(`choices are ${indices} and chosen is ${minInd}`);
+        // console.log(`Target index ${i} (${targets[i]}) had a response time of ${avg_times[i]} ms`);
+        // console.log(`choices are ${choosable} and chosen is ${minInd}`);
     }
 });
 
