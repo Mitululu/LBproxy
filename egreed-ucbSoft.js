@@ -94,9 +94,9 @@ proxyServer.on('proxyRes', function (proxyRes, req, res) {
             pickedRand += 1;
         }
 
-        console.log(`best pick count: ${pickedBest} rand pick count: ${pickedRand}`);
+        // console.log(`best pick count: ${pickedBest} rand pick count: ${pickedRand}`);
     }
-    console.log(`Target index ${i} (${targets[i]}) had a response time of ${avg_times[i]} ms`);
+    // console.log(`Target index ${i} (${targets[i]}) had a response time of ${avg_times[i]} ms`);
 });
 
 // RandomLB target index: Math.floor(Math.random()*3)

@@ -55,7 +55,7 @@ proxyServer.on('proxyRes', function (proxyRes, req, res) {
     if(initialize){
         // console.log("initialize step")
         time_count += 1;
-        avg_times[i] += rtime
+        avg_times[i] += rtime;
 
         if(time_count >= maxcount){
             initialize = false;
@@ -86,6 +86,7 @@ proxyServer.on('proxyRes', function (proxyRes, req, res) {
         }
         // console.log(`Target index ${i} (${targets[i]}) had a response time of ${avg_times[i]} ms`);
         // console.log(`choices are ${choosable} and chosen is ${minInd}`);
+        i = minInd;
     }
 });
 
@@ -93,9 +94,10 @@ proxyServer.on('proxyRes', function (proxyRes, req, res) {
 http.createServer((req, res) => {
     if(initialize){
         i = (i + 1) % targets.length;
-    } else {
-        i = minInd;
-    }
+    } 
+    // else {
+    //     i = minInd;
+    // }
 
     proxyServer.web(req, res, {target: targets[i]});
 }).listen(3000, () => {
