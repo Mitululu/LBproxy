@@ -7,18 +7,18 @@ const http = require('http');
 const proxy = require('http-proxy');
 
 const targets = [
-    "http://34.201.76.76:8000/",
-    "http://18.208.180.237:8000/",
-    "http://54.197.21.48:8000/",
-    "http://44.202.102.250:8000/",
-    "http://44.202.82.37:8000/",
-    "http://3.82.125.158:8000/",
-    "http://3.92.178.80:8000/",
-    "http://54.89.183.168:8000/",
-    "http://18.212.168.69:8000/",
-    "http://18.212.177.139:8000/",
-    "http://52.90.114.26:8000/",
-    "http://184.72.193.108:8000/"
+    "http://54.89.80.195:8000/",
+    "http://52.91.82.14:8000/",
+    "http://3.91.238.245:8000/",
+    "http://54.87.171.219:8000/",
+    "http://54.162.20.161:8000/",
+    "http://54.198.43.132:8000/",
+    "http://3.84.174.9:8000/",
+    "http://54.166.250.121:8000/",
+    "http://54.85.9.143:8000/",
+    "http://18.215.229.172:8000/",
+    "http://34.201.215.175:8000/",
+    "http://3.90.48.76:8000/"
 ];
 // const targets = [
 //     'http://localhost:8000',
@@ -31,6 +31,8 @@ let epsilon = 0.5, rri = -1;
 //     each time the server is chosen (choose it less often for exploration)
 // initial_explore is how many roundrobin iterations for initialization
 //     and the number of most recent response times recorded
+
+let pickedBest = 0, pickedRand = 0;
 
 let target_times = [], avg_times = [], initialize = true;
 let time_count = 0, maxcount = initial_explore * targets.length;
@@ -72,13 +74,27 @@ proxyServer.on('proxyRes', function (proxyRes, req, res) {
         avg_times[i] += cons_add;
         
         if(avg_times[rri] < avg_times[minInd]) minInd = rri;
+
+        roll = Math.random();
+
+        if(pickedBest > 2){
+            roll = 1
+        } else if(pickedRand > 2){
+            roll = 0;
+        }
         
-        if(Math.random() < epsilon){
+        if(roll < epsilon){
             i = minInd;
+            pickedBest += 1;
+            pickedRand = 0;
         } else {
             rri = (rri + 1) % targets.length;
             i = rri;
+            pickedBest = 0;
+            pickedRand += 1;
         }
+
+        console.log(`best pick count: ${pickedBest} rand pick count: ${pickedRand}`);
     }
     console.log(`Target index ${i} (${targets[i]}) had a response time of ${avg_times[i]} ms`);
 });
